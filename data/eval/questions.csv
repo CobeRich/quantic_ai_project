@@ -1,0 +1,31 @@
+id,question,gold_answer,source_document,citation,difficulty
+1,How many PTO days do employees accrue annually?,Employees accrue 20 PTO days annually.,PTO_Policy_Expanded.docx,Policy Statement / Key policy provisions,easy
+2,How far in advance should employees normally submit PTO requests?,Employees should normally submit PTO requests 10 business days in advance.,PTO_Policy_Expanded.docx,Approval Process / Key policy provisions,easy
+3,How many unused PTO days may be carried over into the following year?,Up to 5 unused PTO days may be carried over.,PTO_Policy_Expanded.docx,Policy Statement / Key policy provisions,easy
+4,When is unused PTO paid out?,Unused PTO is paid out only where required by law.,PTO_Policy_Expanded.docx,Compliance / Key policy provisions,medium
+5,Who maintains the official version of the PTO policy?,The Human Resources department maintains the official version.,PTO_Policy_Expanded.docx,Purpose / General policy text,medium
+6,Can department-specific procedures supplement the PTO policy?,"Yes, department-specific procedures may supplement the policy where applicable.",PTO_Policy_Expanded.docx,Scope / General policy text,medium
+7,How many days per week may eligible employees work remotely?,Eligible employees may work remotely up to three days per week.,Remote_Work_Policy_Expanded.docx,Policy Statement / Key policy provisions,easy
+8,During which hours must remote employees be available?,Remote employees must be available from 09:00 to 16:00 local time.,Remote_Work_Policy_Expanded.docx,Employee Responsibilities / Key policy provisions,easy
+9,What type of devices must remote employees use?,Remote employees must use company-managed devices.,Remote_Work_Policy_Expanded.docx,Security / Key policy provisions,easy
+10,What connection requirement applies to remote work?,Remote employees must connect through the corporate VPN.,Remote_Work_Policy_Expanded.docx,Security / Key policy provisions,easy
+11,Who may supplement the remote work policy with department-specific procedures?,Departments may supplement the policy with department-specific procedures where applicable.,Remote_Work_Policy_Expanded.docx,Scope / General policy text,medium
+12,Why might the remote work policy be revised?,"It may be revised when business needs, legal requirements, or operational practices change.",Remote_Work_Policy_Expanded.docx,Revision History / General policy text,medium
+13,What is the minimum password length required by the information security policy?,Passwords must contain at least 12 characters.,Information_Security_Policy_Expanded.docx,Passwords / Key policy provisions,easy
+14,How often must passwords be rotated?,Passwords must be rotated every 90 days.,Information_Security_Policy_Expanded.docx,Rotation / Key policy provisions,easy
+15,Is multi-factor authentication mandatory?,"Yes, MFA is mandatory.",Information_Security_Policy_Expanded.docx,Multi-factor Authentication / Key policy provisions,easy
+16,Are employees allowed to share passwords?,"No, password sharing is prohibited.",Information_Security_Policy_Expanded.docx,Prohibited / Key policy provisions,easy
+17,How quickly must security incidents be reported?,Security incidents must be reported within one hour.,Information_Security_Policy_Expanded.docx,Incident Reporting / Key policy provisions,easy
+18,What may happen if employees fail to follow information security requirements?,Failure to follow the requirements may result in corrective action.,Information_Security_Policy_Expanded.docx,Compliance / General policy text,medium
+19,Within how many days must expense reports be submitted?,Expense reports must be submitted within 30 days.,Expense_Reimbursement_Policy_Expanded.docx,Submission / Key policy provisions,easy
+20,When are receipts required for expenses?,Receipts are required for expenses exceeding $25.,Expense_Reimbursement_Policy_Expanded.docx,Receipts / Key policy provisions,easy
+21,What airfare class is required for trips under six hours?,Economy airfare is required for trips under six hours.,Expense_Reimbursement_Policy_Expanded.docx,Travel / Key policy provisions,easy
+22,How quickly are approved expense claims reimbursed?,Approved claims are reimbursed within 15 business days.,Expense_Reimbursement_Policy_Expanded.docx,Payment / Key policy provisions,easy
+23,Are business-related expenses automatically eligible for reimbursement?,"No, business-related expenses must follow the policy and normally require appropriate approval.",Expense_Reimbursement_Policy_Expanded.docx,Eligibility / General policy text and Key policy provisions,medium
+24,Who should employees contact for the official version of the expense policy?,Employees should rely on Human Resources as the maintainer of the official version.,Expense_Reimbursement_Policy_Expanded.docx,Purpose / General policy text,medium
+25,How many paid public holidays do employees receive each year?,Employees receive 10 paid public holidays each year.,Benefits_and_Holidays_Policy_Expanded.docx,Public Holidays / Key policy provisions,easy
+26,When does health insurance coverage begin?,Health insurance begins on the first day of the month after hire.,Benefits_and_Holidays_Policy_Expanded.docx,Health Insurance / Key policy provisions,easy
+27,What retirement contribution match does the company provide?,The company matches retirement contributions up to 5% of salary.,Benefits_and_Holidays_Policy_Expanded.docx,Retirement / Key policy provisions,easy
+28,How much paid parental leave do eligible employees receive?,Eligible employees receive 12 weeks of paid parental leave.,Benefits_and_Holidays_Policy_Expanded.docx,Parental Leave / Key policy provisions,easy
+29,Who owns the official employee benefits and holiday policy?,Human Resources owns and maintains the official version.,Benefits_and_Holidays_Policy_Expanded.docx,Owner / General policy text,medium
+30,Under what conditions may the benefits and holiday policy be revised?,"It may be revised when business needs, legal requirements, or operational practices change.",Benefits_and_Holidays_Policy_Expanded.docx,Revision History / General policy text,medium
