@@ -3,7 +3,10 @@ import os
 from pathlib import Path
 from typing import List, Dict, Any
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except Exception:
+    load_dotenv = None
 #from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma  # maintained package
 # remove OpenAIEmbeddings import
@@ -11,8 +14,9 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_openai import ChatOpenAI
 
-# Load environment variables from .env in project root
-load_dotenv()
+# Load environment variables from .env in project root when python-dotenv is available.
+if load_dotenv is not None:
+    load_dotenv(dotenv_path=".env")
 
 CHUNKS_PATH = Path("data/processed/chunks.jsonl")
 VECTORSTORE_DIR = "vectorstore"

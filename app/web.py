@@ -1,7 +1,6 @@
 import os
 from flask import Blueprint, request, jsonify
 from .guardrails import is_in_scope, trim_words
-from .rag import answer_with_rag
 
 web_bp = Blueprint("web", __name__)
 
@@ -211,12 +210,26 @@ def home():
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({question})
               });
-              const data = await res.json();
+
+              const raw = await res.text();
+              let data = {};
+              try {
+                data = raw ? JSON.parse(raw) : {};
+              } catch {
+                data = {answer: raw || 'Unexpected server response', citations: []};
+              }
+
+              if (!res.ok) {
+                answer.value = data.error || data.answer || ('Request failed with status ' + res.status + '.');
+                sources.value = '';
+                return;
+              }
+
               answer.value = data.answer || 'No answer returned.';
               const citationLines = (data.citations || []).map((c) => {
                 return (c.doc_title || 'unknown') + ' :: ' + (c.chunk_id || 'unknown');
               });
-              sources.value = citationLines.length ? citationLines.join('\n') : 'No citations returned.';
+              sources.value = citationLines.length ? citationLines.join(' | ') : 'No citations returned.';
             } catch (err) {
               answer.value = 'Request failed. Please try again.';
               sources.value = String(err);
@@ -244,6 +257,9 @@ def chat():
     
     k = int(os.getenv("TOP_K", "4"))
     try:
+        # Lazy import keeps app bootable even when heavy RAG dependencies
+        # are not installed in the current runtime environment.
+        from .rag import answer_with_rag
         result = answer_with_rag(question, k=k)
         result["answer"] = trim_words(result["answer"], max_words=180)
         return jsonify(result), 200
