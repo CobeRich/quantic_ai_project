@@ -73,6 +73,12 @@ def chat():
 #    result = answer_with_rag(question, k=k)
 #    result["answer"] = trim_words(result["answer"], max_words=180)
 
+web_bp = Blueprint("web", __name__)
+
+@web_bp.get("/health")
+def health():
+    return jsonify({"status": "ok"}), 200
+
     # Placeholder until RAG pipeline is wired in next steps
     # return jsonify({
     #     "answer": "RAG pipeline not connected yet.",

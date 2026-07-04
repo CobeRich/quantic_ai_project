@@ -1,0 +1,31 @@
+id,question,answer,citations,grounded_1_0,citation_accurate_1_0,completeness_2_1_0,concise_1_0,notes
+1,How many PTO days do employees accrue annually?,,,1,1,2,1,Clear numeric answer with citations.
+2,How far in advance should employees normally submit PTO requests?,,,1,1,2,1,"Direct policy rule, concise."
+3,How many unused PTO days may be carried over into the following year?,,,1,1,2,1,Direct carryover rule.
+4,When is unused PTO paid out?,,,1,1,2,1,"Correct condition, concise."
+5,Who maintains the official version of the PTO policy?,,,1,1,2,1,Ownership/maintainer answered directly.
+6,Can department-specific procedures supplement the PTO policy?,,,1,1,2,1,Yes + supporting statement present.
+7,How many days per week may eligible employees work remotely?,,,1,1,2,1,Direct numeric limit answered.
+8,During which hours must remote employees be available?,,,1,1,2,1,Direct hours answered.
+9,What type of devices must remote employees use?,,,1,1,2,1,Device/VPN requirement explicit.
+10,What connection requirement applies to remote work?,,,1,1,2,1,Connection requirement answered clearly.
+11,Who may supplement the remote work policy with department-specific procedures?,,,,,,,
+12,Why might the remote work policy be revised?,,,,,,,
+13,What is the minimum password length required by the information security policy?,,,,,,,
+14,How often must passwords be rotated?,,,,,,,
+15,Is multi-factor authentication mandatory?,,,,,,,
+16,Are employees allowed to share passwords?,,,,,,,
+17,How quickly must security incidents be reported?,,,,,,,
+18,What may happen if employees fail to follow information security requirements?,,,,,,,
+19,Within how many days must expense reports be submitted?,,,,,,,
+20,When are receipts required for expenses?,,,,,,,
+21,What airfare class is required for trips under six hours?,,,,,,,
+22,How quickly are approved expense claims reimbursed?,,,,,,,
+23,Are business-related expenses automatically eligible for reimbursement?,,,,,,,
+24,Who should employees contact for the official version of the expense policy?,,,,,,,
+25,How many paid public holidays do employees receive each year?,,,,,,,
+26,When does health insurance coverage begin?,,,,,,,
+27,What retirement contribution match does the company provide?,,,,,,,
+28,How much paid parental leave do eligible employees receive?,,,,,,,
+29,Who owns the official employee benefits and holiday policy?,,,,,,,
+30,Under what conditions may the benefits and holiday policy be revised?,,,,,,,

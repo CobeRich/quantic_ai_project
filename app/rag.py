@@ -72,7 +72,16 @@ def build_vectorstore() -> Chroma:
     if not chunks:
         raise ValueError("No chunks available to index.")
 
-    texts = [c["text"] for c in chunks]
+    #texts = [c["text"] for c in chunks]
+    texts = []
+    for c in chunks:
+        doc_title = c.get("doc_title", "unknown")
+        chunk_text = c.get("text", "")
+        # section_hint optional; use chunk index if you don't have headings
+        section_hint = str(c.get("chunk_index", "unknown"))
+        text_for_embedding = f"Document: {doc_title}\nSection: {section_hint}\n\n{chunk_text}"
+        texts.append(text_for_embedding)
+
     metadatas = [{
         "chunk_id": c["chunk_id"],
         "doc_id": c["doc_id"],
@@ -111,6 +120,20 @@ def retrieve(question: str, k: int = 4):
     return vs.similarity_search(question, k=k)
 
 
+def retrieve_with_scores(question: str, k: int = 6, min_score: float = 0.35):
+    vs = load_vectorstore()
+    # Lower distance = better match for Chroma
+    pairs = vs.similarity_search_with_score(question, k=k)
+    filtered = []
+    for doc, score in pairs:
+        if score <= min_score:
+            filtered.append((doc, score))
+    # Fallback: if threshold too strict, keep top 2
+    if not filtered:
+        filtered = pairs[:2]
+    return filtered
+
+
 def answer_with_rag(question: str, k: int = 4) -> Dict[str, Any]:
     """
     End-to-end RAG answer:
@@ -118,9 +141,11 @@ def answer_with_rag(question: str, k: int = 4) -> Dict[str, Any]:
     2) prompt model with strict grounding/citation rules
     3) return answer + citations + snippets
     """
-    docs = retrieve(question, k=k)
+    doc_pairs = retrieve_with_scores(question, k=k, min_score=float(os.getenv("RETRIEVAL_MAX_DISTANCE", "0.35")))
+    #docs = [d for d, _ in doc_pairs]
+#    docs = retrieve(question, k=k)
 
-    if not docs:
+    if not doc_pairs:
         return {
             "answer": "I can only answer based on the policy corpus, and I found no relevant content.",
             "citations": [],
@@ -131,7 +156,7 @@ def answer_with_rag(question: str, k: int = 4) -> Dict[str, Any]:
     citations = []
     snippets = []
 
-    for d in docs:
+    for d, score in doc_pairs:
         meta = d.metadata or {}
         chunk_text = d.page_content.strip()
         doc_title = meta.get("doc_title", "unknown")
@@ -153,6 +178,7 @@ def answer_with_rag(question: str, k: int = 4) -> Dict[str, Any]:
         snippets.append({
             "chunk_id": chunk_id,
             "doc_title": doc_title,
+            "score": float(score),
             "snippet": chunk_text[:280] + ("..." if len(chunk_text) > 280 else ""),
         })
 
