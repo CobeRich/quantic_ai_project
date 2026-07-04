@@ -1,4 +1,7 @@
+import os
 from flask import Blueprint, request, jsonify
+from .guardrails import is_in_scope, trim_words
+from .rag import answer_with_rag
 
 web_bp = Blueprint("web", __name__)
 
@@ -46,10 +49,35 @@ def chat():
 
     if not question:
         return jsonify({"error": "question is required"}), 400
+    
+    if not is_in_scope(question):
+        return jsonify({
+            "answer": "I can only answer questions about company policies and procedures in this corpus.",
+            "citations": [],
+            "snippets": [],
+        }), 200
+    
+    k = int(os.getenv("TOP_K", "4"))
+    try:
+        result = answer_with_rag(question, k=k)
+        result["answer"] = trim_words(result["answer"], max_words=180)
+        return jsonify(result), 200
+    except Exception as e:
+        # Final guardrail so UI/API remains stable for demo/CI
+        return jsonify({
+            "answer": "Temporary backend issue. Please try again.",
+            "error": str(e),
+            "citations": [],
+            "snippets": [],
+        }), 200
+#    result = answer_with_rag(question, k=k)
+#    result["answer"] = trim_words(result["answer"], max_words=180)
 
     # Placeholder until RAG pipeline is wired in next steps
-    return jsonify({
-        "answer": "RAG pipeline not connected yet.",
-        "citations": [],
-        "snippets": [],
-    }), 200
+    # return jsonify({
+    #     "answer": "RAG pipeline not connected yet.",
+    #     "citations": [],
+    #     "snippets": [],
+    # }), 200
+
+#    return jsonify(result), 200

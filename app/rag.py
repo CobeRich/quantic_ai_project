@@ -9,6 +9,7 @@ from langchain_chroma import Chroma  # maintained package
 # remove OpenAIEmbeddings import
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
+from langchain_openai import ChatOpenAI
 
 # Load environment variables from .env in project root
 load_dotenv()
@@ -41,6 +42,29 @@ def _get_embedding_model() -> HuggingFaceEmbeddings:
     """
     model_name = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2").strip()
     return HuggingFaceEmbeddings(model_name=model_name)
+
+
+def _get_llm() -> ChatOpenAI:
+    """
+    OpenAI-compatible chat model client.
+    You can point this to OpenAI/OpenRouter/Groq compatible endpoints.
+    """
+    api_key = os.getenv("LLM_API_KEY", "").strip()
+    base_url = os.getenv("LLM_BASE_URL", "https://api.openai.com/v1").strip()
+    model = os.getenv("LLM_MODEL", "gpt-4o-mini").strip()
+    max_tokens = int(os.getenv("MAX_ANSWER_TOKENS", "300"))
+
+    if not api_key:
+        raise ValueError("Missing LLM_API_KEY for generation.")
+
+    return ChatOpenAI(
+        api_key=api_key,
+        base_url=base_url,
+        model=model,
+        temperature=0,
+        max_tokens=max_tokens,
+    )
+
 
 def build_vectorstore() -> Chroma:
     """Build persistent Chroma index from chunks."""
@@ -85,6 +109,100 @@ def retrieve(question: str, k: int = 4):
     """Retrieve top-k similar chunks for question."""
     vs = load_vectorstore()
     return vs.similarity_search(question, k=k)
+
+
+def answer_with_rag(question: str, k: int = 4) -> Dict[str, Any]:
+    """
+    End-to-end RAG answer:
+    1) retrieve chunks
+    2) prompt model with strict grounding/citation rules
+    3) return answer + citations + snippets
+    """
+    docs = retrieve(question, k=k)
+
+    if not docs:
+        return {
+            "answer": "I can only answer based on the policy corpus, and I found no relevant content.",
+            "citations": [],
+            "snippets": [],
+        }
+
+    context_blocks = []
+    citations = []
+    snippets = []
+
+    for d in docs:
+        meta = d.metadata or {}
+        chunk_text = d.page_content.strip()
+        doc_title = meta.get("doc_title", "unknown")
+        chunk_id = meta.get("chunk_id", "unknown")
+        source_path = meta.get("source_path", "")
+
+        # Build context block with stable citation identifiers
+        context_blocks.append(
+            f"[{chunk_id}] ({doc_title})\n{chunk_text}"
+        )
+
+        citations.append({
+            "chunk_id": chunk_id,
+            "doc_title": doc_title,
+            "source_path": source_path,
+        })
+
+        # Short snippet preview for UI/API response
+        snippets.append({
+            "chunk_id": chunk_id,
+            "doc_title": doc_title,
+            "snippet": chunk_text[:280] + ("..." if len(chunk_text) > 280 else ""),
+        })
+
+    context = "\n\n".join(context_blocks)
+
+    system_prompt = (
+        "You are a company policy assistant. "
+        "Answer ONLY using the provided context. "
+        "If the answer is not in context, say you don't have enough policy evidence. "
+        "Always include supporting citation chunk IDs in your prose like [doc::chunk_x]. "
+        "Keep answers concise."
+    )
+
+    user_prompt = f"""Question: {question}
+
+Context:
+{context}
+
+Return:
+1) concise answer grounded only in context
+2) include citation chunk IDs inline
+"""
+    try:
+        llm = _get_llm()
+        resp = llm.invoke([
+        ("system", system_prompt),
+        ("user", user_prompt),
+        ])
+        answer_text = resp.content
+
+        return {
+            "answer": resp.content,
+            "citations": citations,
+            "snippets": snippets,
+        }
+    except Exception as e:
+        # Fallback mode: if remote LLM fails (quota/rate-limit/auth),
+        # return an extractive answer from top snippets so /chat never 500s.
+        top = snippets[:2]
+        joined = " ".join([s["snippet"] for s in top]).strip()
+        answer_text = (
+            "LLM generation is temporarily unavailable (provider quota/rate-limit). "
+            "Based on retrieved policy text: " + joined
+        )
+
+    return {
+        "answer": answer_text,
+        "citations": [],
+        "snippets": [],
+    }
 
 
 if __name__ == "__main__":
