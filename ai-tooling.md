@@ -5,7 +5,7 @@
   - project scaffolding and task planning
   - generating sample policies in html, md, pdf, and txt files
   - improving documentation and submission-readiness
-- GitHub Copilot (optional, if used in your IDE)
+- GitHub Copilot
   - drafting initial implementations for ingestion, retrieval, and evaluation
   - debugging environment/API errors
   - for inline code suggestions and refactors.
@@ -24,7 +24,6 @@
 - End-to-end testing and endpoint behavior verification
 
 ## Quality Control Process
-- Manually reviewed generated code before committing
 - Ran local tests and endpoint checks
 - Rebuilt index after corpus changes
 - Executed evaluation and validated output artifacts (`results.csv`)
