@@ -1,5 +1,5 @@
 import os
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, current_app, request, jsonify
 from .guardrails import is_in_scope, trim_words
 
 web_bp = Blueprint("web", __name__)
@@ -247,24 +247,24 @@ def chat():
 
     if not question:
         return jsonify({"error": "question is required"}), 400
-    
+
     if not is_in_scope(question):
         return jsonify({
             "answer": "I can only answer questions about company policies and procedures in this corpus.",
             "citations": [],
             "snippets": [],
         }), 200
-    
+
     k = int(os.getenv("TOP_K", "4"))
     try:
-        # Lazy import keeps app bootable even when heavy RAG dependencies
-        # are not installed in the current runtime environment.
         from .rag import answer_with_rag
         result = answer_with_rag(question, k=k)
-        result["answer"] = trim_words(result["answer"], max_words=180)
+        result["answer"] = trim_words(result.get("answer", ""), max_words=180)
+        result.setdefault("citations", [])
+        result.setdefault("snippets", [])
         return jsonify(result), 200
     except Exception as e:
-        # Final guardrail so UI/API remains stable for demo/CI
+        current_app.logger.exception("chat failed")
         return jsonify({
             "answer": "Temporary backend issue. Please try again.",
             "error": str(e),
