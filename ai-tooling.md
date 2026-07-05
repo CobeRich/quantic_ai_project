@@ -3,10 +3,12 @@
 ## Tools Used
 - ChatGPT / AI assistant for:
   - project scaffolding and task planning
-  - debugging environment/API errors
-  - drafting initial implementations for ingestion, retrieval, and evaluation
+  - generating sample policies in html, md, pdf, and txt files
   - improving documentation and submission-readiness
-- GitHub Copilot (optional, if used in your IDE) for inline code suggestions and refactors.
+- GitHub Copilot (optional, if used in your IDE)
+  - drafting initial implementations for ingestion, retrieval, and evaluation
+  - debugging environment/API errors
+  - for inline code suggestions and refactors.
 
 ## What Worked Well
 - Rapidly generated baseline modules (`ingest.py`, `rag.py`, `web.py`, `eval.py`)
