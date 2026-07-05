@@ -1,6 +1,8 @@
 import os
-from flask import Blueprint, current_app, request, jsonify
+from flask import Blueprint, request, jsonify
 from .guardrails import is_in_scope, trim_words
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
+from flask import current_app
 
 web_bp = Blueprint("web", __name__)
 
@@ -244,7 +246,6 @@ def home():
 def chat():
     payload = request.get_json(silent=True) or {}
     question = (payload.get("question") or "").strip()
-
     if not question:
         return jsonify({"error": "question is required"}), 400
 
@@ -256,13 +257,30 @@ def chat():
         }), 200
 
     k = int(os.getenv("TOP_K", "4"))
+    timeout_s = int(os.getenv("RAG_TIMEOUT_SECONDS", "25"))
+
     try:
         from .rag import answer_with_rag
-        result = answer_with_rag(question, k=k)
+
+        def _run():
+            return answer_with_rag(question, k=k)
+
+        with ThreadPoolExecutor(max_workers=1) as ex:
+            fut = ex.submit(_run)
+            result = fut.result(timeout=timeout_s)
+
         result["answer"] = trim_words(result.get("answer", ""), max_words=180)
         result.setdefault("citations", [])
         result.setdefault("snippets", [])
         return jsonify(result), 200
+
+    except FuturesTimeout:
+        current_app.logger.exception("chat timeout")
+        return jsonify({
+            "answer": "Request timed out. Please try a shorter question.",
+            "citations": [],
+            "snippets": [],
+        }), 200
     except Exception as e:
         current_app.logger.exception("chat failed")
         return jsonify({
